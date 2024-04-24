@@ -1,12 +1,34 @@
 from app import app, db
-from flask import jsonify, request, redirect, url_for
+from flask import jsonify, request, redirect, url_for, session, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta, timezone
 from authlib.integrations.flask_client import OAuth
 from functools import wraps
 import jwt
 import os
+import pathlib
 from app.models import User, Token
+import flask
+import google_auth_oauthlib.flow
+from google_auth_oauthlib.flow import Flow
+
+current_directory = pathlib.Path(__file__).parent.parent
+
+GOOGLE_CLIENT_ID = os.environ.get('CLIENT_ID')
+client_secrets_file = current_directory.parent / 'client_secrets.json'
+client_secrets_file_str = str(client_secrets_file)
+
+
+# Wrap the flow initialization in a function that gets called within a request context
+def initialize_flow():
+    state = flask.session.get('state')  # Use get method to avoid KeyError if 'state' is not in session
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        client_secrets_file=client_secrets_file_str,
+        scopes=['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'],
+        state=state)
+    flow.redirect_uri = flask.url_for('google_callback', _external=True)
+    return flow
+
 
 
 
@@ -18,11 +40,11 @@ google = oauth.register(
     client_secret= os.environ.get('CLIENT_SECRET'),
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     authorize_params=None,
-    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_url='https://oauth2.googleapis.com/token',
     access_token_params=None,
     refresh_token_url=None,
     refresh_token_params=None,
-    redirect_uri='http://localhost:5000/auth/google',
+    redirect_uri='http://127.0.0.1:5000/google_callback',
     client_kwargs={'scope': 'openid profile email'}
 )
 
@@ -80,44 +102,6 @@ def login():
     return jsonify({'token': token, 'is_admin': user.is_admin}), 200
 
 
-
-@app.route('/auth/google')
-def google_login():
-    return google.authorize_redirect(redirect_uri=url_for('google_auth_callback', _external=True))
-
-@app.route('/auth/google/callback')
-def google_auth_callback():
-    token = google.authorize_access_token()
-    resp = google.get('userinfo')
-    user_info = resp.json()
-    # Here, you can create or retrieve a user account based on user_info
-    user = User.query.filter_by(email=user_info['email']).first()
-    if not user:
-        # Create new user if not exists
-        user = User(
-            email=user_info['email'],
-            username=user_info['name']
-        )
-        db.session.add(user)
-        db.session.commit()
-
-    # Generate JWT token
-    payload = {
-        'user_id': user.user_id,
-        'is_admin': False,  # Assuming Google sign-in users are not admins by default
-        'exp': datetime.now(timezone.utc) + timedelta(days=1)  # Token expires in 1 day
-    }
-    token = jwt.encode(payload, app.secret_key, algorithm='HS256')
-
-    # Store token in database
-    new_token = Token(token=token.decode('utf-8'), user_id=user.user_id)
-    db.session.add(new_token)
-    db.session.commit()
-
-    return redirect(url_for('redirect_uri', token=token.decode('utf-8')))
-
-
-
 def token_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -156,3 +140,73 @@ def get_user_from_token(token):
         return None
     except jwt.InvalidTokenError:
         return None
+
+# @app.route('/auth/google')
+# def google_login():
+#     return google.authorize_redirect(redirect_uri=url_for('google_auth_callback', _external=True))
+
+# @app.route('/auth/google/callback')
+# def google_auth_callback():
+#     token = google.authorize_access_token()
+#     resp = google.get('userinfo')
+#     user_info = resp.json()
+#     # Here, you can create or retrieve a user account based on user_info
+#     user = User.query.filter_by(email=user_info['email']).first()
+#     if not user:
+#         # Create new user if not exists
+#         user = User(
+#             email=user_info['email'],
+#             username=user_info['name']
+#         )
+#         db.session.add(user)
+#         db.session.commit()
+
+#     # Generate JWT token
+#     payload = {
+#         'user_id': user.user_id,
+#         'is_admin': False,  # Assuming Google sign-in users are not admins by default
+#         'exp': datetime.now(timezone.utc) + timedelta(days=1)  # Token expires in 1 day
+#     }
+#     token = jwt.encode(payload, app.secret_key, algorithm='HS256')
+
+#     # Store token in database
+#     new_token = Token(token=token.decode('utf-8'), user_id=user.user_id)
+#     db.session.add(new_token)
+#     db.session.commit()
+
+#     return redirect(url_for('redirect_uri', token=token.decode('utf-8')))
+
+
+def login_is_required(function):
+    def wrapper(*args, **kwargs):
+        if "google_id" not in session:
+            return abort(401) # Unauthorized
+        else:
+            return function()
+    return wrapper  
+
+
+@app.route('/google/login')
+def google_login():
+    authorization_url, state = initialize_flow().authorization_url()
+    session['state'] = state
+    return redirect(authorization_url)
+
+
+
+@app.route('/google/callback')
+def google_callback():
+    pass
+
+
+@app.route('/google/logout')
+def google_logout():
+    session.clear()
+    return redirect('/')
+
+
+
+@app.route('/protected_area')
+@login_is_required
+def protected_area():
+    return 'Protected! <a href="/google/logout"><button>Google Logout</button></a>'
