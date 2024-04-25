@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import '../index.css'; // Import the CSS file for styling
 
-export default function SignUp () {
+export default function SignIn() {
     const [formData, setFormData] = useState({
-        username: '',
         email: '',
         password: '',
     });
 
-    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate(); // Use useNavigate for programmatic navigation
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,35 +19,27 @@ export default function SignUp () {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/signup', formData);
+            const response = await axios.post('http://localhost:5000/signin', formData);
             console.log(response.data);
-            setSuccessMessage('You have successfully signed up!');
+            localStorage.setItem('token', response.data.token); // Store token in localStorage
             setErrorMessage(''); // Clear any previous errors
-            // Redirect to success page or perform any other actions as needed
+            
+            // Redirect based on user's is_admin status
+            if (response.data.is_admin) {
+                navigate('/AdminDashboard'); // Redirect to Admin Dashboard
+            } else {
+                navigate('/UserDashboard'); // Redirect to User Dashboard
+            }
         } catch (error) {
             console.error(error.response.data);
-            setSuccessMessage(''); // Clear any previous success messages
             setErrorMessage(error.response.data.message);
         }
     };
 
     return (
         <div className="max-w-md mx-auto mt-20">
-            <h1 className="text-2xl font-bold text-center mb-6">Sign Up</h1>
+            <h1 className="text-2xl font-bold text-center mb-6">Sign In</h1>
             <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="username" className="block text-sm font-bold mb-1">Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        placeholder="Enter your username"
-                        required
-                        className="w-full border border-gray-300 rounded-md py-2 px-3"
-                    />
-                </div>
                 <div className="mb-4">
                     <label htmlFor="email" className="block text-sm font-bold mb-1">Email</label>
                     <input
@@ -74,12 +66,10 @@ export default function SignUp () {
                         className="w-full border border-gray-300 rounded-md py-2 px-3"
                     />
                 </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Sign Up</button>
+                <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Sign In</button>
             </form>
-            {successMessage && <p className="text-green-500">{successMessage}</p>}
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            <p className="mt-4 text-sm">Don't have an account? <Link to="/signup" className="text-blue-500">Sign Up</Link></p>
         </div>
     );
-};
-
-
+}

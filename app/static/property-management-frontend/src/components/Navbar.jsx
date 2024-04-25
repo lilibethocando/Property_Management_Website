@@ -5,10 +5,6 @@ import { navItems } from '../constants';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-    const handleClick = (e) => {
-        e.preventDefault();
-        alert('Sign In clicked');
-    }
 
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const toggleNavbar = () => {
@@ -17,7 +13,7 @@ const Navbar = () => {
 
 
     return (
-        <nav className="nav.sticky.top-0.z-50.py-3.backdrop-blur-lg.border-b.border-neutral-700/80" style={{ backgroundColor: '#aaf0d1', zIndex: '1000' }}>
+        <nav className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-700/80" style={{ backgroundColor: '#aaf0d1', zIndex: '1000' }}>
             <div className="container px-4 mx-auto relative text-sm">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center flex-shrink-0">
@@ -27,7 +23,7 @@ const Navbar = () => {
                     <ul className='hidden lg:flex ml-14 space-x-12'>
                         {navItems.map((item, index) => (
                             <li key={index}>
-                                <a href={item.href}>{item.label}</a>
+                                <Link to={item.to}>{item.label}</Link>
                             </li>
                         ))}
                     </ul>
@@ -35,9 +31,7 @@ const Navbar = () => {
                         <Link to="/signin" className='py-2 px-3 border rounded-md' >
                             Sign In
                         </Link>
-                        <Link to="/signup" className='bg-gradient-to-r from-green-400 to-green-200 py-2 px-3 rounded-md'>
-                            Sign Up
-                        </Link>
+                        <Link to="/signup" className='bg-gradient-to-r from-green-400 to-green-200 py-2 px-3 rounded-md'>Sign Up</Link>
 
                     </div>
                     <div className="lg:hidden md:flex flex-col justify-end">
@@ -56,12 +50,12 @@ const Navbar = () => {
                             ))}
                         </ul>
                         <div className="flex space-x-6">
-                            <a href="#!" onClick={handleClick} className='py-2 px-3 border rounded-md' >
-                                Sign In
-                            </a>
-                            <a href="#!" className='bg-gradient-to-r from-green-400 to-green-200 py-2 px-3 rounded-md'>
-                                Sign Up
-                            </a>
+                        <Link to="/signin" className='py-2 px-3 border rounded-md' >
+                            Sign In
+                        </Link>
+                        <Link to="/signup" className='bg-gradient-to-r from-green-400 to-green-200 py-2 px-3 rounded-md'>
+                            Sign Up
+                        </Link>
 
                         </div>
                     </div>

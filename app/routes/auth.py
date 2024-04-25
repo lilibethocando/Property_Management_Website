@@ -76,7 +76,7 @@ def signup():
 
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/signin', methods=['POST'])
 def login():
     data = request.json
     email = data.get('email')
