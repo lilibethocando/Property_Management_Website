@@ -194,7 +194,7 @@ def google_login():
 
 
 
-@app.route('/google/callback')
+@app.route('/callback')
 def google_callback():
     pass
 

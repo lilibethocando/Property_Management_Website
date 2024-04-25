@@ -8,3 +8,7 @@
     font-family: "Poppins", sans-serif;
     color-scheme: light dark; 
 }
+
+.background-container {
+    background-image: url('./assets/chicago.jpeg');
+}  
