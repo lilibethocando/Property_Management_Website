@@ -1,17 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
     font-family: "Poppins", sans-serif;
-    color-scheme: light dark; 
+    color-scheme: light dark;
 }
 
 .background-container {
     background-image: url('./assets/chicago.jpeg');
-}  
+}
 
 
 /* custom.css */
@@ -20,14 +21,61 @@
     0% {
         opacity: 1;
     }
+
     50% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
 }
 
 .blink {
-    animation: blink 1s linear 5; /* Blink 5 times */
+    animation: blink 1s linear 5;
+    /* Blink 5 times */
+}
+
+.dashboard {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard h1, .dashboard h2 {
+    color: #333;
+}
+
+.dashboard p {
+    color: #666;
+}
+
+.dashboard .complaint-section,
+.dashboard .request-section,
+.dashboard .reminder-section,
+.dashboard .email-section,
+.dashboard .payment-section {
+    margin-bottom: 20px;
+}
+
+.dashboard select, .dashboard textarea, .dashboard input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.dashboard button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dashboard button:hover {
+    background-color: #0056b3;
 }

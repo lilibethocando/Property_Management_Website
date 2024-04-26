@@ -8,6 +8,7 @@ import SignUp from './pages/SignUpPage';
 import SignIn from './pages/SignInPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import PaymentsPage from './pages/PaymentsPage';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/UserDashboard" element={<UserDashboardPage />} />
           <Route path="/AdminDashboard" element={<AdminDashboardPage />} />
+          <Route path="/Payments" element={<PaymentsPage />} />
         </Routes>
     </BrowserRouter>
   );

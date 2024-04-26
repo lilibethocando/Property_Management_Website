@@ -11,6 +11,7 @@ from app.models import User, Token
 import flask
 import google_auth_oauthlib.flow
 from google_auth_oauthlib.flow import Flow
+from flask_cors import cross_origin
 
 current_directory = pathlib.Path(__file__).parent.parent
 
@@ -50,6 +51,7 @@ google = oauth.register(
 
 
 @app.route('/signup', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def signup():
     data = request.json
     username = data.get('username')

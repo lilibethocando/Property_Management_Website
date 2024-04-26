@@ -20,7 +20,6 @@ def get_user(user_id):
         return jsonify({'error': 'User not found'}), 404
     
 
-from flask import jsonify
 
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):

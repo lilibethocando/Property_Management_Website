@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
@@ -7,7 +7,7 @@ import os
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, support_credentials=True)
 
 app.config.from_object(Config)
 
