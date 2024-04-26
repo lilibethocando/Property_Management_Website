@@ -9,6 +9,7 @@ import os
 app = Flask(__name__)
 CORS(app, support_credentials=True)
 
+
 app.config.from_object(Config)
 
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -18,7 +19,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from . import models
-from app.routes import home, apartment, request_by, tenant, user, complaint, payment, reminder, notification, auth
+from app.routes import home, apartment, request_by, tenant, user, complaint, payment, reminder, notification, auth, email
 
 @app.before_request
 def before_request():

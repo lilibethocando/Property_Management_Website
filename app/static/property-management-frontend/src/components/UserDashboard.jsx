@@ -1,59 +1,116 @@
-import React from 'react';
-import { useState } from 'react';
-import '../index.css'
+import React, { useState, useEffect } from 'react';
+import { Card, Metric, Text } from '@tremor/react';
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
 
 
-const UserDashboard = ({ rentAmount, contractDuration }) => {
-    const [complaint, setComplaint] = useState('');
-    const [request, setRequest] = useState('');
-    const [reminder, setReminder] = useState('');
-    const [email, setEmail] = useState('');
+const UserDashboard = () => {
+  const [paymentsCount, setPaymentsCount] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [latestPayments, setLatestPayments] = useState([]);
 
-    return (
-        <div className="dashboard">
-            <h1>Welcome to the User Dashboard!</h1>
-            <p>Rent Amount: {rentAmount}</p>
-            <p>Contract Duration: {contractDuration} months</p>
+  useEffect(() => {
+    fetchPaymentsCount();
+    fetchPaymentMethods();
+    fetchTotalBalance();
+    fetchLatestPayments();
+  }, []);
 
-            <div className="complaint-section">
-                <h2>Make a Complaint</h2>
-                <select onChange={(e) => setComplaint(e.target.value)}>
-                    <option value="">Select complaint...</option>
-                    {/* Add your complaint options here */}
-                </select>
-                <textarea placeholder="Write your complaint here..."></textarea>
-                <button>Upload Picture</button>
-            </div>
+  const fetchPaymentsCount = async () => {
+    try {
+      const response = await fetch(`/payments/count`);
+      const data = await response.json();
+      console.log('Payments count:', data);
+      setPaymentsCount(data.count);
+    } catch (error) {
+      console.error('Error fetching payments count:', error);
+    }
+  };
 
-            <div className="request-section">
-                <h2>Make a Request</h2>
-                <select onChange={(e) => setRequest(e.target.value)}>
-                    <option value="">Select request...</option>
-                    {/* Add your request options here */}
-                </select>
-                <textarea placeholder="Write your request here..."></textarea>
-            </div>
+  const fetchPaymentMethods = async () => {
+    try {
+      const response = await fetch(`/payments/paymentmethods`);
+      const data = await response.json();
+      console.log('Payment methods:', data);
+      setPaymentMethods(data.payment_methods);
+    } catch (error) {
+      console.error('Error fetching payment methods:', error);
+    }
+  };
 
-            <div className="reminder-section">
-                <h2>Set a Reminder</h2>
-                <input type="date" onChange={(e) => setReminder(e.target.value)} />
-            </div>
+  const fetchTotalBalance = async () => {
+    try {
+      const response = await fetch(`/payments/getbalance/tenant_id`);
+      const data = await response.json();
+      console.log('Total balance:', data);
+      setTotalBalance(data.balance);
+    } catch (error) {
+      console.error('Error fetching total balance:', error);
+    }
+  };
 
-            <div className="email-section">
-                <h2>Send an Email</h2>
-                <input type="email" placeholder="Email address" onChange={(e) => setEmail(e.target.value)} />
-                <textarea placeholder="Write your email here..."></textarea>
-            </div>
+  const fetchLatestPayments = async () => {
+    try {
+      const response = await fetch(`/payments`);
+      const data = await response.json();
+      console.log('Latest payments:', data);
+      setLatestPayments(data);
+    } catch (error) {
+      console.error('Error fetching latest payments:', error);
+    }
+  };
 
-            <div className="payment-section">
-                <h2>Make a Payment</h2>
-                <button>Pay Now</button>
-                <h2>Payment History</h2>
-                {/* Display payment history here */}
-            </div>
-        </div>
-    );
-};
+  return (
+    <div className="mx-auto max-w-2xl">
+      {/* Card 1 */}
+      <Card className="mx-auto max-w-xs" decoration="top" decorationColor="indigo">
+        <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Payments Count</p>
+        <p className="text-3xl text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">{paymentsCount}</p>
+      </Card>
+      
+      {/* Card 2 */}
+      <Card className="mx-auto max-w-xs" decoration="top" decorationColor="indigo">
+        <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Payment Methods</p>
+        <ul>
+          {paymentMethods.map((method, index) => (
+            <li key={index}>{method.payment_method}: ${method.total}</li>
+          ))}
+        </ul>
+      </Card>
+      
+      {/* Card 3 */}
+      <Card className="mx-auto max-w-xs" decoration="top" decorationColor="indigo">
+        <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">Total Balance</p>
+        <p className="text-3xl text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">${totalBalance}</p>
+      </Card>
+      
+      {/* Table */}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>Payment ID</TableHeaderCell>
+            <TableHeaderCell>Tenant ID</TableHeaderCell>
+            <TableHeaderCell>Amount</TableHeaderCell>
+            <TableHeaderCell>Status</TableHeaderCell>
+            <TableHeaderCell>Payment Type</TableHeaderCell>
+            <TableHeaderCell>Description</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {latestPayments.slice(0, 20).map(payment => (
+            <TableRow key={payment.payment_id}>
+              <TableCell>{payment.payment_id}</TableCell>
+              <TableCell>{payment.tenant_id}</TableCell>
+              <TableCell>{payment.amount}</TableCell>
+              <TableCell>{payment.status}</TableCell>
+              <TableCell>{payment.payment_type}</TableCell>
+              <TableCell>{payment.description}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
 
 export default UserDashboard;
-

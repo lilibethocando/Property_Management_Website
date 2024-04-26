@@ -17,9 +17,9 @@ import user6 from "../assets/profile-pictures/user6.jpg";
 
 export const navItems = [
     { label: "Home", to: "/" },
-    { label: "View Apartments", href: "#" },
-    { label: "Availability", href: "#" },
-    { label: "Waiting List", href: "#" },
+    { label: "View Apartments", to: "/viewapartments" },
+    { label: "Availability", to: "/availability" },
+    // { label: "Waiting List", href: "#" },
 ];
 
 export const testimonials = [
@@ -165,5 +165,5 @@ export const platformLinks = [
 ];
 
 export const communityLinks = [
-    { href: "#", text: "Events" },
+    { href: "#", text: "Contact Us" },
 ];

@@ -8,7 +8,7 @@ const TopSection = () => {
                 <div className="text-center text-white">
                     <h1 className="text-4xl font-bold mb-6">Smart Property Management</h1>
                     <p className="text-lg mb-8">Simplify property management with ease and efficiency</p>
-                    <a href="#!" className="bg-gradient-to-r from-green-400 to-green-200 py-2 px-6 rounded-md">Get Started</a>
+                    {/* <a href="#!" className="bg-gradient-to-r from-green-400 to-green-200 py-2 px-6 rounded-md">Get Started</a> */}
                 </div>
             </div>
         </div>
