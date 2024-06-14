@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { AxiosContext } from './AxiosContext';
 
 const stripePromise = loadStripe('pk_test_51OCsCqCb8MXdJtc6zbhHL9pJ8ceF8cLFbYy9sMfMa9hjwMbKpHtvuxE7rzSGmeXSRvO01t23heGuZSjAqH33AXk800gQ5oB94T');
 
 const MakePayment = () => {
+    // Use axios instance from context
+    const axiosInstance = useContext(AxiosContext);
+
     const [tenantId, setTenantId] = useState('');
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
@@ -21,10 +24,10 @@ const MakePayment = () => {
             let paymentData;
             
             // Send OPTIONS request first
-            await axios.options('http://localhost:5000/payments/makepayment');
+            await axiosInstance.options('/payments/makepayment');
     
             // Then send the POST request
-            const response = await axios.post('http://localhost:5000/payments/makepayment', {
+            const response = await axiosInstance.post('/payments/makepayment', {
                 tenant_id: tenantId,
                 amount: amount,
                 payment_method: paymentMethod,
@@ -51,7 +54,6 @@ const MakePayment = () => {
             setLoading(false);
         }
     };
-    
 
     const handleChange = (e) => {
         setPaymentMethod(e.target.value);

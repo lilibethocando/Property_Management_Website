@@ -65,6 +65,11 @@ def signup():
     # Check if the email is already in use
     if User.query.filter_by(email=email).first():
         return jsonify({'message': 'Email already in use'}), 409
+    
+    # Check if the username already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"message": "Username already exists"}), 400
 
     # Hash the password
     password_hash = generate_password_hash(password)

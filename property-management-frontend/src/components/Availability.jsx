@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Card, Metric, Text, Button } from '@tremor/react';
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@tremor/react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { AxiosContext } from '../components/AxiosContext';
 
 import apt1 from '../assets/apt1.jpeg';
 import apt2 from '../assets/apt2.webp';
 import apt3 from '../assets/apt3.jpeg';
 
 const UserDashboard = () => {
+    // Use axios instance from context
+    const axiosInstance = useContext(AxiosContext);
+
     // Fake data for apartments
     const apartments = [
         {
@@ -56,14 +60,11 @@ const UserDashboard = () => {
 
     const handleSendEmail = async () => {
         try {
-            const response = await fetch('http://localhost:5000/sendemail', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, message })
+            const response = await axiosInstance.post('/sendemail', {
+                email,
+                message
             });
-            if (response.ok) {
+            if (response.status === 200) {
                 console.log('Email sent successfully');
             } else {
                 console.error('Failed to send email');

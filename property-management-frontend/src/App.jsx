@@ -11,10 +11,12 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import PaymentsPage from './pages/PaymentsPage';
 import AvailabilityPage from './pages/AvailabilityPage';
 import ViewApartmentsPage from './pages/ViewApartmentsPage';
+import { AxiosProvider } from './components/AxiosContext';
 
 const App = () => {
 
   return (
+    <AxiosProvider>
     <BrowserRouter>
       <Navbar />
 
@@ -29,6 +31,7 @@ const App = () => {
           <Route path="/ViewApartments" element={<ViewApartmentsPage />} />
         </Routes>
     </BrowserRouter>
+    </AxiosProvider>
   );
 };
 

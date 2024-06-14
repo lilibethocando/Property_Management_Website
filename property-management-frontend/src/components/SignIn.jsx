@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../index.css'; // Import the CSS file for styling
+import { AxiosContext } from './AxiosContext'; // Import AxiosContext
 
 export default function SignIn() {
+    const axiosInstance = useContext(AxiosContext); // Use axios instance from context
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -19,7 +20,7 @@ export default function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/signin', formData);
+            const response = await axiosInstance.post('/signin', formData); // Use axiosInstance
             console.log(response.data);
             localStorage.setItem('token', response.data.token); // Store token in localStorage
             setErrorMessage(''); // Clear any previous errors

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
+import { AxiosContext } from './AxiosContext'; // Import AxiosContext
 import { Link } from 'react-router-dom';
 
-export default function SignUp () {
+export default function SignUp() {
+    const axiosInstance = useContext(AxiosContext); // Use axios instance from context
+
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -19,7 +21,7 @@ export default function SignUp () {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/signup', formData);
+            const response = await axiosInstance.post('/signup', formData); // Use axiosInstance
             console.log(response.data);
             setSuccessMessage('You have successfully signed up!');
             setErrorMessage(''); // Clear any previous errors
@@ -80,6 +82,4 @@ export default function SignUp () {
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         </div>
     );
-};
-
-
+}
