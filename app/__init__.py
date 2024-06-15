@@ -6,7 +6,7 @@ from config import Config
 import os
 
 
-app = Flask(__name__, static_folder='/property-management-frontend/build', static_url_path='')
+app = Flask(__name__, static_folder='../property-management-frontend/build', static_url_path='')
 
 CORS(app, resources={r"/*": {"origins": ['http://localhost:5173', 'https://property-management-website.onrender.com']}}, supports_credentials=True)
 
