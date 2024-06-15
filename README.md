@@ -1,6 +1,6 @@
 # 🏢 Property Management Website
 
-[Visit the Website](https://propertyy-managementt-website.onrender.com/)
+[Visit the Website](https://property-management-website.onrender.com)
 
 ## 📋 Project Description
 
